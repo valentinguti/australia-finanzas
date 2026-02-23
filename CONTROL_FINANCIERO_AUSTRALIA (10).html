@@ -1,0 +1,1592 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Finanzas · Australia</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff;--bg1:#f8f8f6;--bg2:#f2f1ed;--bg3:#eae9e4;
+  --line:#e0dfd9;--line2:#d0cfc8;
+  --ink:#111111;--ink2:#333;--ink3:#666;--ink4:#999;
+  --green:#166534;--green-bg:#f0fdf4;--green-b:#bbf7d0;
+  --red:#991b1b;--red-bg:#fef2f2;--red-b:#fecaca;
+  --amber:#92400e;--amber-bg:#fffbeb;--amber-b:#fde68a;
+  --blue:#1e40af;--blue-bg:#eff6ff;--blue-b:#bfdbfe;
+  --sans:'Inter',system-ui,sans-serif;
+  --mono:'JetBrains Mono','Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{font-size:14px;-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);min-height:100vh}
+
+/* TOPBAR */
+.topbar{background:var(--ink);padding:0 16px;height:46px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
+.brand{font-family:var(--mono);font-size:12px;font-weight:500;color:#fff;letter-spacing:.3px;display:flex;align-items:center;gap:8px}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.tc-chip{font-family:var(--mono);font-size:10px;color:#999;display:flex;align-items:center;gap:5px}
+.tc-dot{width:5px;height:5px;border-radius:50%;background:#4ade80;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.tc-dot.live{animation:pulse 2s infinite}
+.tc-val{color:#ccc;font-weight:500}
+.sync-st{font-size:10px;color:#555;font-family:var(--mono)}
+.sync-btn{background:none;border:1px solid #444;color:#888;font-family:var(--mono);font-size:10px;padding:3px 9px;cursor:pointer;border-radius:2px}
+.sync-btn:active{background:#222}
+
+/* TABNAV */
+.tabnav{background:var(--bg1);border-bottom:2px solid var(--ink);display:flex;overflow-x:auto;scrollbar-width:none;padding:0 4px}
+.tabnav::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:10px 14px 8px;font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.8px;text-transform:uppercase;color:var(--ink4);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;user-select:none}
+.tab:hover{color:var(--ink2)}
+.tab.on{color:var(--ink);border-bottom-color:var(--ink);background:var(--bg)}
+
+/* PAGES */
+.pg{display:none;padding-bottom:84px;opacity:0;transition:opacity .15s ease}
+.pg.on{display:block;opacity:1}
+.pg.fade-in{animation:fadeIn .15s ease forwards}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* SECTION HEADER */
+.sh{padding:20px 16px 0}
+.sh-row{display:flex;align-items:baseline;justify-content:space-between;border-bottom:1.5px solid var(--ink);padding-bottom:6px}
+.sh-title{font-size:15px;font-weight:700;color:var(--ink);letter-spacing:-.2px}
+.sh-sub{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--ink3)}
+.sh-action{font-size:10px;color:var(--ink3);cursor:pointer;background:none;border:1px solid var(--line2);padding:3px 10px;font-family:var(--mono)}
+.sh-action:active{background:var(--bg2)}
+
+/* LEDGER */
+.ledger{width:100%;border-collapse:collapse}
+.ledger-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ledger th{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--ink4);padding:8px 16px;text-align:left;background:var(--bg1);border-bottom:1px solid var(--line2);white-space:nowrap}
+.ledger th.r{text-align:right}
+.ledger td{padding:10px 16px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:12px;color:var(--ink2);vertical-align:middle}
+.ledger tr:last-child td{border-bottom:none}
+.ledger tr.total td{background:var(--bg2);border-top:1.5px solid var(--ink);border-bottom:1.5px solid var(--ink);font-weight:600;color:var(--ink)}
+.ledger tr.subtotal td{background:var(--bg1);font-weight:500;color:var(--ink);border-bottom:1px solid var(--line2)}
+.ledger tr:hover:not(.total):not(.subtotal) td{background:var(--bg1)}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.pos{color:var(--green)!important;font-weight:600}
+.neg{color:var(--red)!important;font-weight:600}
+.dim{color:var(--ink4)!important;font-weight:300}
+.bold{font-weight:700!important;color:var(--ink)!important}
+.italic{font-style:italic}
+.label-cell{font-size:12px;color:var(--ink2);font-weight:500}
+
+/* STAT ROW */
+.statrow{display:grid;border-bottom:1px solid var(--line)}
+.statrow-4{grid-template-columns:1fr 1fr 1fr 1fr}
+.statrow-3{grid-template-columns:1fr 1fr 1fr}
+.statrow-2{grid-template-columns:1fr 1fr}
+.stat{padding:14px 16px;border-right:1px solid var(--line)}
+.statrow-4 .stat:nth-child(4n),.statrow-3 .stat:nth-child(3n),.statrow-2 .stat:nth-child(2n){border-right:none}
+.stat-lbl{font-family:var(--mono);font-size:8px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:5px}
+.stat-val{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--ink);line-height:1;letter-spacing:-.5px}
+.stat-val.g{color:var(--green)}
+.stat-val.r{color:var(--red)}
+.stat-val.a{color:var(--amber)}
+.stat-sub{font-family:var(--mono);font-size:10px;color:var(--ink4);margin-top:3px}
+
+/* BAND */
+.band{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+.band.g{background:var(--green-bg);border-left:3px solid var(--green)}
+.band.r{background:var(--red-bg);border-left:3px solid var(--red)}
+.band.a{background:var(--amber-bg);border-left:3px solid var(--amber)}
+.band.b{background:var(--blue-bg);border-left:3px solid var(--blue)}
+.band.n{background:var(--bg1);border-left:3px solid var(--line2)}
+.band-lbl{font-family:var(--mono);font-size:8px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--ink4);margin-bottom:4px}
+.band-val{font-family:var(--mono);font-size:22px;font-weight:700;letter-spacing:-.5px}
+.band.g .band-val{color:var(--green)}
+.band.r .band-val{color:var(--red)}
+.band.a .band-val{color:var(--amber)}
+.band.b .band-val{color:var(--blue)}
+.band-sub{font-family:var(--mono);font-size:10px;color:var(--ink4);margin-top:3px}
+.band-right{text-align:right}
+.band-pct{font-family:var(--mono);font-size:28px;font-weight:700;color:var(--ink3)}
+
+/* PROGRESS */
+.progbar{height:3px;background:var(--line);overflow:hidden}
+.progbar-fill{height:100%;background:var(--green);transition:width .8s ease}
+.progbar-fill.a{background:var(--amber)}
+
+/* MONTH STRIP */
+.mstrip{background:var(--bg1);border-bottom:1px solid var(--line2);display:flex;overflow-x:auto;scrollbar-width:none}
+.mstrip::-webkit-scrollbar{display:none}
+.mtab{flex-shrink:0;padding:8px 12px;font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.3px;color:var(--ink4);cursor:pointer;border-right:1px solid var(--line);user-select:none;white-space:nowrap;position:relative}
+.mtab:hover{background:var(--bg2);color:var(--ink2)}
+.mtab.on{background:var(--bg);color:var(--ink);font-weight:600;border-top:2px solid var(--ink)}
+.mtab.has .mdot{position:absolute;top:6px;right:5px;width:4px;height:4px;border-radius:50%;background:var(--green)}
+
+/* INPUTS */
+.inp-num{background:transparent;border:none;border-bottom:1px solid transparent;font-family:var(--mono);font-size:12px;font-weight:500;color:var(--ink);text-align:right;width:100%;outline:none;padding:2px 0;-webkit-appearance:none}
+.inp-num:focus{border-bottom-color:var(--ink3);background:var(--bg1)}
+.inp-num::placeholder{color:var(--line2);font-weight:300}
+input[type=number]{-moz-appearance:textfield}
+input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none}
+.inp-text{background:transparent;border:none;border-bottom:1px solid transparent;font-family:var(--mono);font-size:11px;color:var(--ink2);font-weight:500;width:100%;outline:none;padding:2px 0}
+.inp-text:focus{border-bottom-color:var(--line2)}
+.inp-text::placeholder{color:var(--line)}
+.inp-date{background:var(--bg1);border:1px solid var(--line2);font-family:var(--mono);font-size:12px;color:var(--ink);padding:8px 10px;outline:none;width:100%;-webkit-appearance:none}
+.inp-date:focus{border-color:var(--ink3)}
+.inp-big{background:var(--bg1);border:1px solid var(--line2);font-family:var(--mono);font-size:14px;font-weight:600;color:var(--ink);padding:10px 12px;text-align:right;outline:none;width:100%;-webkit-appearance:none}
+.inp-big:focus{border-color:var(--ink2);background:var(--bg)}
+.inp-big::placeholder{font-weight:300;color:var(--ink4)}
+.inp-line{background:var(--bg1);border:1px solid var(--line2);font-family:var(--mono);font-size:12px;color:var(--ink);padding:9px 12px;outline:none;width:100%;-webkit-appearance:none}
+.inp-line:focus{border-color:var(--ink2);background:var(--bg)}
+.inp-line::placeholder{color:var(--ink4);font-weight:300}
+
+/* WEEK/HOURS GRIDS */
+.week-grid{display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid var(--line)}
+.week-cell{border-right:1px solid var(--line);padding:10px 6px;text-align:center}
+.week-cell:last-child{border-right:none}
+.week-lbl{font-family:var(--mono);font-size:8px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:5px}
+.week-inp{width:100%;background:transparent;border:none;border-bottom:1px solid transparent;font-family:var(--mono);font-size:13px;font-weight:600;color:var(--green);text-align:center;outline:none;-webkit-appearance:none;padding:2px 0}
+.week-inp:focus{border-bottom-color:var(--green);background:var(--green-bg)}
+.week-inp::placeholder{color:var(--line2);font-weight:300;font-size:11px}
+.hrs-grid{display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid var(--line)}
+.hrs-cell{border-right:1px solid var(--line);padding:8px 6px;text-align:center}
+.hrs-cell:last-child{border-right:none}
+.hrs-inp{width:100%;background:transparent;border:none;border-bottom:1px solid transparent;font-family:var(--mono);font-size:12px;font-weight:500;color:var(--blue);text-align:center;outline:none;-webkit-appearance:none;padding:2px 0}
+.hrs-inp:focus{border-bottom-color:var(--blue);background:var(--blue-bg)}
+.hrs-inp::placeholder{color:var(--line2);font-weight:300}
+
+/* BUTTONS */
+.btn{background:var(--ink);color:#fff;border:none;padding:9px 16px;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.5px;cursor:pointer;-webkit-appearance:none;touch-action:manipulation}
+.btn:active{opacity:.8}
+.btn.g{background:var(--green)}
+.btn.r{background:var(--red)}
+.btn.outline{background:none;border:1px solid var(--line2);color:var(--ink3)}
+.btn.sm{padding:4px 10px;font-size:10px}
+.btn.full{width:100%;padding:12px;font-size:12px;letter-spacing:.8px}
+
+/* FORM */
+.form-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fg{margin-bottom:12px}
+.fg label{display:block;font-family:var(--mono);font-size:8px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:6px}
+
+/* PAY ROW */
+.pay-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:10px 16px;border-bottom:1px solid var(--line)}
+.pay-date{font-family:var(--mono);font-size:9px;color:var(--ink4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.pay-desc{font-size:12px;color:var(--ink3)}
+.pay-aud{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--green);text-align:right}
+.pay-usd{font-family:var(--mono);font-size:9px;color:var(--ink4);text-align:right;margin-top:1px}
+
+/* META ROW */
+.meta-row{padding:12px 16px;border-bottom:1px solid var(--line)}
+.meta-name{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:6px}
+.meta-bar-wrap{height:4px;background:var(--line);overflow:hidden;margin-bottom:5px}
+.meta-bar-fill{height:100%;transition:width .6s ease}
+.meta-info{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--ink4)}
+
+/* FOOTER */
+.fbar{position:fixed;bottom:0;left:0;right:0;background:var(--ink);display:grid;grid-template-columns:1fr 1px 1fr 1px 1fr;z-index:199;padding-bottom:env(safe-area-inset-bottom)}
+.fbar-div{background:#333}
+.fi{padding:10px 14px;text-align:center}
+.fi-lbl{font-family:var(--mono);font-size:8px;letter-spacing:1.2px;text-transform:uppercase;color:#555;margin-bottom:3px}
+.fi-val{font-family:var(--mono);font-size:14px;font-weight:700;color:#aaa}
+.fi-val.g{color:#4ade80}
+.fi-val.r{color:#f87171}
+.fi-val.a{color:#fbbf24}
+
+/* MISC */
+.spacer{height:16px}
+.pad{padding:14px 16px}
+.empty{text-align:center;padding:32px 20px;color:var(--ink4);font-size:12px;font-family:var(--mono)}
+.chip{display:inline-block;font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;padding:2px 8px}
+.chip.g{background:var(--green-bg);color:var(--green);border:1px solid var(--green-b)}
+.chip.r{background:var(--red-bg);color:var(--red);border:1px solid var(--red-b)}
+.chip.a{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-b)}
+
+/* TOAST */
+#toast{position:fixed;bottom:72px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;font-family:var(--mono);font-size:11px;padding:6px 14px;z-index:9999;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap}
+#toast.show{opacity:1}
+
+/* LOADING */
+#loading{position:fixed;inset:0;background:var(--bg);z-index:9000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+#loading.hide{display:none}
+.spin{width:18px;height:18px;border:2px solid var(--line2);border-top-color:var(--ink);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin-lbl{font-family:var(--mono);font-size:11px;color:var(--ink4)}
+
+/* AUTH */
+#auth{position:fixed;inset:0;background:var(--bg);z-index:8900;display:flex;align-items:center;justify-content:center;padding:24px}
+.auth-box{width:100%;max-width:320px}
+.auth-flag{font-size:24px;margin-bottom:20px;display:block}
+.auth-title{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.auth-sub{font-size:12px;color:var(--ink3);line-height:1.7;margin-bottom:28px}
+.auth-gbtn{width:100%;background:var(--ink);color:#fff;border:none;padding:13px 18px;cursor:pointer;font-family:var(--mono);font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px;letter-spacing:.3px}
+.auth-gbtn:active{opacity:.9}
+.auth-skip{width:100%;background:none;border:1px solid var(--line2);color:var(--ink4);font-family:var(--mono);font-size:10px;padding:10px;cursor:pointer;letter-spacing:.5px}
+.auth-skip:active{background:var(--bg2)}
+.auth-note{margin-top:20px;font-family:var(--mono);font-size:10px;color:var(--ink4);line-height:1.7;border-top:1px solid var(--line);padding-top:16px}
+.auth-err{min-height:16px;font-family:var(--mono);font-size:11px;color:var(--red);margin-top:10px}
+</style>
+</head>
+<body>
+<div id="loading">
+  <div style="text-align:center">
+    <div style="font-size:48px;margin-bottom:16px">🇦🇺</div>
+    <div style="font-family:var(--mono);font-size:18px;font-weight:700;color:var(--ink);letter-spacing:-.3px;margin-bottom:6px">Finanzas · AU</div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--ink4);margin-bottom:28px" id="loading-msg">Cargando...</div>
+    <div style="width:160px;height:2px;background:var(--line);overflow:hidden;margin:0 auto">
+      <div id="loading-bar" style="height:100%;background:var(--ink);width:0%;transition:width .4s ease"></div>
+    </div>
+  </div>
+</div>
+<div id="toast"></div>
+
+<!-- AUTH — pantalla completa (primera vez) -->
+<div id="auth" style="display:none">
+  <div class="auth-box">
+    <span class="auth-flag">🇦🇺</span>
+    <div class="auth-title">Finanzas · AU</div>
+    <div class="auth-sub">Control financiero personal. Tus datos se guardan en tu Google Drive.</div>
+    <button class="auth-gbtn" onclick="startGoogle()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#aaa"/>
+        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#888"/>
+        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#777"/>
+        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#999"/>
+      </svg>
+      Iniciar sesión con Google
+    </button>
+    <button class="auth-skip" onclick="skipAuth()">Usar sin sincronización → solo local</button>
+    <div class="auth-err" id="auth-err"></div>
+    <div class="auth-note">Solo accede a su propia carpeta en tu Drive. Tus datos no son visibles para nadie más.</div>
+  </div>
+</div>
+
+<!-- RECONECTAR — aparece cuando el token expiró, sin pedir email/password -->
+<div id="reconect" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:8900;align-items:center;justify-content:center;padding:24px">
+  <div class="auth-box" style="text-align:center">
+    <span style="font-size:32px;display:block;margin-bottom:16px">🔄</span>
+    <div class="auth-title" style="font-size:16px;margin-bottom:8px">Sesión expirada</div>
+    <div style="font-size:12px;color:var(--ink3);margin-bottom:24px;line-height:1.6">Tu sesión de Google venció.<br>Tocá el botón para reconectar.</div>
+    <button class="auth-gbtn" onclick="reconectGoogle()" id="reconect-btn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#aaa"/>
+        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#888"/>
+        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#777"/>
+        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#999"/>
+      </svg>
+      Reconectar Google Drive
+    </button>
+    <button class="auth-skip" style="margin-top:10px" onclick="skipAuth()">Continuar sin sincronización</button>
+    <div class="auth-err" id="reconect-err"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="topbar">
+  <div class="brand">🇦🇺 &nbsp;Finanzas · Australia</div>
+  <div class="topbar-right">
+    <div class="tc-chip">
+      <div class="tc-dot live" id="tc-dot"></div>
+      <span class="tc-val"><span id="tc-v">—</span> <span style="color:#555;font-size:9px">USD</span></span>
+      <span style="color:#444;font-size:9px;margin:0 2px">·</span>
+      <span class="tc-val"><span id="tc-inv">—</span> <span style="color:#555;font-size:9px">AUD</span></span>
+    </div>
+    <span class="sync-st" id="sync-st">—</span>
+    <button class="sync-btn" onclick="syncNow()">↑↓</button>
+  </div>
+</div>
+
+<div class="tabnav">
+  <div class="tab on" onclick="go('dash',this)">Resumen</div>
+  <div class="tab" onclick="go('deuda',this)">Deuda</div>
+  <div class="tab" onclick="go('inv',this)">Inversión</div>
+  <div class="tab" onclick="go('meses',this)">Meses</div>
+  <div class="tab" onclick="go('metas',this)">Metas</div>
+  <div class="tab" onclick="go('anual',this)">Anual</div>
+</div>
+
+<!-- RESUMEN -->
+<div class="pg on" id="pg-dash">
+  <div class="sh"><div class="sh-row">
+    <span class="sh-title">Resumen 2026</span>
+    <span class="sh-sub" id="d-period">—</span>
+  </div></div>
+  <div class="statrow statrow-4">
+    <div class="stat"><div class="stat-lbl">Ganado</div><div class="stat-val g" id="d-ga">—</div><div class="stat-sub" id="d-gu">—</div></div>
+    <div class="stat"><div class="stat-lbl">Gastado</div><div class="stat-val r" id="d-gsa">—</div><div class="stat-sub" id="d-gsu">—</div></div>
+    <div class="stat"><div class="stat-lbl">Ahorro</div><div class="stat-val" id="d-aa">—</div><div class="stat-sub" id="d-au">—</div></div>
+    <div class="stat"><div class="stat-lbl">Inversión</div><div class="stat-val a" id="d-ia">—</div><div class="stat-sub" id="d-iu">—</div></div>
+  </div>
+  <div class="band g">
+    <div>
+      <div class="band-lbl">Caja disponible</div>
+      <div class="band-val" id="d-ca">AUD —</div>
+      <div class="band-sub">Ahorro acumulado − pagos a padres</div>
+    </div>
+    <div class="band-right">
+      <div class="stat-lbl">En USD</div>
+      <div style="font-family:var(--mono);font-size:16px;font-weight:700;color:var(--green)" id="d-cau">—</div>
+    </div>
+  </div>
+  <div class="band r">
+    <div>
+      <div class="band-lbl">Deuda pendiente · padres</div>
+      <div class="band-val" id="d-da">AUD —</div>
+      <div class="band-sub" id="d-du">USD —</div>
+    </div>
+    <div class="band-right">
+      <div class="band-pct" id="d-dapct">0%</div>
+      <div class="band-sub">saldado</div>
+    </div>
+  </div>
+  <div class="progbar"><div class="progbar-fill a" id="d-pbar" style="width:0%"></div></div>
+
+  <div class="spacer"></div>
+  <div class="sh"><div class="sh-row">
+    <span class="sh-title">Tipo de cambio</span>
+    <span class="sh-sub">1 AUD → USD</span>
+  </div></div>
+  <div style="padding:12px 16px;border-bottom:1px solid var(--line)">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+      <span style="font-family:var(--mono);font-size:11px;color:var(--ink4);white-space:nowrap">1 AUD =</span>
+      <input type="number" step="0.0001" inputmode="decimal" id="tc-inp" class="inp-big" style="width:110px" placeholder="0.6300" oninput="manualTC()">
+      <span style="font-family:var(--mono);font-size:11px;color:var(--ink4)">USD <span id="tc-src" style="font-style:italic;color:var(--ink4);font-size:10px">auto</span></span>
+    </div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--ink3);padding:6px 0">
+      1 USD = <strong id="tc-inv-dash">—</strong> AUD
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+  <div class="sh"><div class="sh-row">
+    <span class="sh-title">Último mes activo</span>
+    <span id="d-lm-name" class="sh-sub">—</span>
+  </div></div>
+  <div id="d-last-content"><div class="empty">Sin datos aún</div></div>
+</div>
+
+<!-- DEUDA -->
+<div class="pg" id="pg-deuda">
+  <div class="sh" style="margin-top:16px"><div class="sh-row">
+    <span class="sh-title">Deuda con padres</span>
+    <span id="deu-chip" class="chip r">AUD 0</span>
+  </div></div>
+  <div class="ledger-wrap"><table class="ledger">
+    <thead><tr><th>Concepto</th><th class="r">AUD</th><th class="r">USD</th></tr></thead>
+    <tbody>
+      <tr><td class="label-cell italic">Inversión inicial</td><td class="num dim" id="dl-inv">—</td><td class="num dim" id="dl-invu">—</td></tr>
+      <tr>
+        <td class="label-cell italic">Apoyo de padres</td>
+        <td class="num dim" style="padding:6px 16px">
+          <input type="number" step="0.01" inputmode="decimal" class="inp-num" id="apoyo-inp"
+            style="width:90px;text-align:right;font-size:12px"
+            placeholder="0.00" oninput="ST.apoyo=+this.value||0;sched();updDeuda();updDash();updFoot();">
+        </td>
+        <td class="num dim" id="dl-gsiu">—</td>
+      </tr>
+      <tr class="subtotal"><td class="bold">Deuda bruta</td><td class="num neg" id="dl-bruta">—</td><td class="num neg" id="dl-brutau">—</td></tr>
+      <tr><td class="label-cell italic">Pagos realizados</td><td class="num pos" id="dl-pag">—</td><td class="num pos" id="dl-pagu">—</td></tr>
+      <tr class="total"><td class="bold">Deuda pendiente</td><td class="num neg bold" id="dl-pend">—</td><td class="num neg" id="dl-pendu">—</td></tr>
+    </tbody>
+  </table></div>
+  <div style="padding:8px 16px 12px">
+    <div class="progbar"><div class="progbar-fill" id="deu-bar" style="width:0%"></div></div>
+    <div style="display:flex;justify-content:space-between;margin-top:5px;font-family:var(--mono);font-size:10px;color:var(--ink4)">
+      <span>Pagado</span><span id="deu-pct">0.0%</span>
+    </div>
+  </div>
+  <div class="band g">
+    <div>
+      <div class="band-lbl">Caja disponible</div>
+      <div class="band-val" id="deu-ca">AUD —</div>
+    </div>
+    <div style="text-align:right;font-family:var(--mono);font-size:13px;color:var(--green)" id="deu-cau">USD —</div>
+  </div>
+
+  <div class="spacer"></div>
+  <div class="sh"><div class="sh-row"><span class="sh-title">Registrar pago</span></div></div>
+  <div style="padding:14px 16px;border-bottom:1px solid var(--line)">
+    <div class="form-2" style="margin-bottom:10px">
+      <div class="fg" style="margin:0"><label>Fecha</label><input type="date" class="inp-date" id="pago-f"></div>
+      <div class="fg" style="margin:0"><label>Monto AUD</label><input type="number" step="0.01" inputmode="decimal" class="inp-big" id="pago-m" placeholder="0.00" oninput="updDeuda()"></div>
+    </div>
+    <div class="fg"><label>Descripción</label><input type="text" id="pago-d" class="inp-line" placeholder="Ej: Transferencia total"></div>
+    <div id="pago-preview" style="font-family:var(--mono);font-size:11px;color:var(--ink4);margin-bottom:10px;min-height:16px"></div>
+    <button class="btn g full" onclick="regPago()">Registrar pago →</button>
+  </div>
+
+  <div class="sh"><div class="sh-row">
+    <span class="sh-title">Historial de pagos</span>
+    <span id="deu-np" class="sh-sub">0 pagos</span>
+  </div></div>
+  <div id="pag-list"><div class="empty">Sin pagos registrados.</div></div>
+
+  <div class="sh"><div class="sh-row"><span class="sh-title">Calculadora de devolución</span></div></div>
+  <div style="padding:14px 16px;border-bottom:1px solid var(--line)">
+    <div class="form-2" style="margin-bottom:8px">
+      <div class="fg" style="margin:0"><label>Meses para saldar</label><input type="number" inputmode="numeric" class="inp-big" id="cuota-m" placeholder="12" oninput="calcCuota()"></div>
+      <div class="fg" style="margin:0"><label>Cuota mensual</label>
+        <div style="background:var(--green-bg);border:1px solid var(--green-b);padding:10px 12px;text-align:right;font-family:var(--mono);font-size:18px;font-weight:700;color:var(--green)" id="cuota-r">—</div>
+      </div>
+    </div>
+    <div id="cuota-s" style="font-family:var(--mono);font-size:10px;color:var(--ink4);font-style:italic;margin-top:4px"></div>
+  </div>
+
+  <div class="sh"><div class="sh-row"><span class="sh-title">Notas</span></div></div>
+  <div style="padding:14px 16px;border-bottom:1px solid var(--line)">
+    <textarea id="nota" style="width:100%;background:none;border:none;font-family:var(--mono);font-size:12px;color:var(--ink3);outline:none;resize:vertical;min-height:60px;line-height:1.7" placeholder="Sin plazo fijo. Sin intereses..." oninput="ST.nota=this.value;sched()"></textarea>
+  </div>
+</div>
+
+<!-- INVERSIÓN -->
+<div class="pg" id="pg-inv">
+  <div class="sh" style="margin-top:16px"><div class="sh-row">
+    <span class="sh-title">Inversión inicial</span>
+    <button class="sh-action" onclick="addInv()">+ fila</button>
+  </div></div>
+  <div class="ledger-wrap"><table class="ledger">
+    <thead><tr><th>Concepto</th><th class="r">USD</th><th class="r">AUD</th><th>Nota</th><th></th></tr></thead>
+    <tbody id="inv-body"></tbody>
+    <tfoot><tr class="total">
+      <td class="bold">Total inversión</td>
+      <td class="num a bold" id="inv-tu">USD 0.00</td>
+      <td class="num a bold" id="inv-ta">AUD 0.00</td>
+      <td colspan="2"></td>
+    </tr></tfoot>
+  </table></div>
+</div>
+
+<!-- MESES -->
+<div class="pg" id="pg-meses">
+  <div class="mstrip" id="mstrip"></div>
+  <div id="mes-cnt"></div>
+</div>
+
+<!-- METAS -->
+<div class="pg" id="pg-metas">
+  <div class="sh" style="margin-top:16px"><div class="sh-row">
+    <span class="sh-title">Metas de ahorro</span>
+    <button class="sh-action" onclick="addMeta()">+ meta</button>
+  </div></div>
+  <div class="band b">
+    <div>
+      <div class="band-lbl">Caja disponible</div>
+      <div class="band-val" id="meta-caja">AUD 0</div>
+    </div>
+    <div class="band-right">
+      <div class="stat-lbl">Libre (sin asignar)</div>
+      <div style="font-family:var(--mono);font-size:16px;font-weight:700;color:var(--blue)" id="meta-libre">AUD 0</div>
+    </div>
+  </div>
+  <div id="metas-list"><div class="empty">No hay metas. Usá + meta para agregar.</div></div>
+
+  <div class="spacer"></div>
+  <div class="sh"><div class="sh-row"><span class="sh-title">Nueva meta</span></div></div>
+  <div style="padding:14px 16px;border-bottom:1px solid var(--line)">
+    <div class="fg"><label>Nombre</label><input type="text" id="meta-nombre" class="inp-line" placeholder="Ej: Moto, Viaje, Laptop..."></div>
+    <div class="form-2">
+      <div class="fg" style="margin:0"><label>Objetivo AUD</label><input type="number" step="1" inputmode="numeric" class="inp-big" id="meta-obj" placeholder="0"></div>
+      <div class="fg" style="margin:0"><label>Asignado AUD</label><input type="number" step="1" inputmode="numeric" class="inp-big" id="meta-asig" placeholder="0"></div>
+    </div>
+    <div style="margin-top:10px"><button class="btn full" onclick="addMeta()">Agregar →</button></div>
+  </div>
+</div>
+
+<!-- ANUAL -->
+<div class="pg" id="pg-anual">
+  <div class="sh" style="margin-top:16px"><div class="sh-row">
+    <span class="sh-title">Balance anual 2026</span>
+    <span class="sh-sub">12 meses</span>
+  </div></div>
+  <div class="statrow statrow-4">
+    <div class="stat"><div class="stat-lbl">Mejor mes</div><div class="stat-val g" style="font-size:14px" id="rs-mej">—</div><div class="stat-sub" id="rs-mejm">—</div></div>
+    <div class="stat"><div class="stat-lbl">Peor mes</div><div class="stat-val r" style="font-size:14px" id="rs-peor">—</div><div class="stat-sub" id="rs-peorm">—</div></div>
+    <div class="stat"><div class="stat-lbl">Meses activos</div><div class="stat-val" style="font-size:14px" id="rs-act">0/12</div></div>
+    <div class="stat"><div class="stat-lbl">Tarifa real</div><div class="stat-val" style="font-size:14px" id="rs-tarifa">—</div><div class="stat-sub">AUD/hora</div></div>
+  </div>
+  <div class="sh"><div class="sh-row">
+    <span class="sh-title">Gastos por categoría</span>
+    <span class="sh-sub" id="rs-gtotal">AUD 0 total</span>
+  </div></div>
+  <div id="cat-chart" style="padding:4px 0;border-bottom:1px solid var(--line)"></div>
+  <div class="sh"><div class="sh-row">
+    <span class="sh-title">Evolución mensual</span>
+    <span class="sh-sub">ingresos · gastos · ahorro</span>
+  </div></div>
+  <div style="padding:14px 16px 12px;border-bottom:1px solid var(--line);overflow-x:auto">
+    <canvas id="bar-chart" height="130" style="width:100%;min-width:300px;display:block"></canvas>
+  </div>
+  <div class="ledger-wrap"><table class="ledger">
+    <thead><tr><th>Mes</th><th class="r">Ingresos</th><th class="r">Gastos</th><th class="r">Ahorro</th><th class="r">USD</th></tr></thead>
+    <tbody id="rs-body"></tbody>
+    <tfoot>
+      <tr class="total">
+        <td class="bold">Total</td>
+        <td class="num pos bold" id="rs-ti">—</td>
+        <td class="num neg bold" id="rs-tg">—</td>
+        <td class="num bold" id="rs-ta">—</td>
+        <td class="num bold" id="rs-tu">—</td>
+      </tr>
+      <tr class="subtotal">
+        <td class="italic dim">Promedio</td>
+        <td class="num dim" id="rs-pi">—</td>
+        <td class="num dim" id="rs-pg">—</td>
+        <td class="num dim" id="rs-pa">—</td>
+        <td class="num dim" id="rs-pau">—</td>
+      </tr>
+    </tfoot>
+  </table></div>
+</div>
+
+<!-- FOOTER -->
+<div class="fbar">
+  <div class="fi"><div class="fi-lbl">Ahorro</div><div class="fi-val g" id="f-a">$0</div></div>
+  <div class="fbar-div"></div>
+  <div class="fi"><div class="fi-lbl">Caja</div><div class="fi-val a" id="f-c">$0</div></div>
+  <div class="fbar-div"></div>
+  <div class="fi"><div class="fi-lbl">Deuda</div><div class="fi-val r" id="f-d">$0</div></div>
+</div>
+
+<!-- MODAL CONFIRMACIÓN -->
+<div id="modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9500;align-items:flex-end;justify-content:center;padding:0">
+  <div id="modal-box" style="background:var(--bg);width:100%;max-width:420px;padding:24px 20px 32px;border-radius:12px 12px 0 0">
+    <div id="modal-title" style="font-family:var(--mono);font-size:15px;font-weight:700;color:var(--ink);margin-bottom:8px"></div>
+    <div id="modal-msg" style="font-size:13px;color:var(--ink3);line-height:1.6;margin-bottom:24px"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <button class="btn outline" style="padding:13px" onclick="modalResolve(false)">Cancelar</button>
+      <button class="btn" id="modal-confirm-btn" style="padding:13px" onclick="modalResolve(true)">Confirmar</button>
+    </div>
+  </div>
+</div>
+<script src="https://accounts.google.com/gsi/client" async></script>
+<script>
+/* ═══ CONSTANTS ═══ */
+const DRIVE_FILE='cf_australia_2026.json';
+const DRIVE_SCOPE='https://www.googleapis.com/auth/drive.appdata';
+const CLIENT_ID='181059148005-jbpua2ag12jpvh6niff7jovlniklogu3.apps.googleusercontent.com';
+const MN=['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
+const MS=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+const GK=['arriendo','comida','transporte','servicios','telefono','salud','seguros','ropa','entretenimiento','viajes','cuidado','gym','otros'];
+const GL=['Arriendo / Vivienda','Comida / Supermercado','Transporte','Servicios','Teléfono','Salud','Seguros','Ropa','Entretenimiento','Viajes','Cuidado personal','Gym','Otros'];
+const IK=['freelance','bonificacion','familia','otros'];
+const IL=['Freelance / Extra','Bonificación','Familia','Otros'];
+const DEF_INV=[
+  {c:'Visa / Documentos',u:158,a:0,d:''},
+  {c:'Pasaje Aéreo',u:1727,a:0,d:''},
+  {c:'Seguro Médico',u:230,a:0,d:''},
+  {c:'Depósito vivienda',u:0,a:0,d:''},
+  {c:'Muebles / Hogar',u:0,a:0,d:''},
+  {c:'Teléfono / SIM',u:268,a:0,d:'Plan local + gastos llegada'},
+  {c:'Transporte setup',u:0,a:0,d:''},
+  {c:'White Card / Forklift',u:0,a:0,d:'Licencia trabajo en altura/maquinaria'},
+  {c:'Fondo emergencia',u:0,a:0,d:''},
+];
+
+function defM(){
+  const g={},n={},ing={};
+  GK.forEach(k=>{g[k]=0;n[k]='';});
+  IK.forEach(k=>{ing[k]=0;});
+  return{semanas:[0,0,0,0,0],horas:[0,0,0,0,0],ingresos:ing,gastos:g,notas:n};
+}
+function initST(){
+  return{
+    tc:.6300,tcTime:'',nota:'',pagos:[],metas:[],apoyo:0,
+    invItems:JSON.parse(JSON.stringify(DEF_INV)),
+    months:MN.map((_,i)=>{
+      const m=defM();
+      if(i===1){m.gastos.comida=132.51;m.gastos.transporte=45;m.gastos.cuidado=17;m.gastos.otros=123;m.notas.otros='Afeitadora / Kebap';}
+      return m;
+    })
+  };
+}
+
+/* ═══ STATE ═══ */
+let ST={},saveT=null,gToken=null,driveFileId=null,useGoogle=false;
+
+/* ═══ LOCAL STORAGE ═══ */
+const lsave=()=>{try{localStorage.setItem('cf_aus26',JSON.stringify(ST));}catch(e){}};
+const lload=()=>{try{const d=localStorage.getItem('cf_aus26');return d?JSON.parse(d):null;}catch(e){return null;}};
+
+/* ═══ GOOGLE DRIVE ═══ */
+function startGoogle(){
+  if(typeof google==='undefined'||!google.accounts){
+    document.getElementById('auth-err').textContent='Cargando Google... intentá de nuevo.';
+    setTimeout(()=>startGoogle(),2000);return;
+  }
+  doSignIn();
+}
+function doSignIn(){
+  document.getElementById('auth-err').textContent='Abriendo Google...';
+  const client=google.accounts.oauth2.initTokenClient({
+    client_id:CLIENT_ID,scope:DRIVE_SCOPE,
+    callback:async(resp)=>{
+      if(resp.error){document.getElementById('auth-err').textContent='Error: '+resp.error;return;}
+      gToken=resp.access_token;useGoogle=true;localStorage.setItem('cf_ug','1');
+      document.getElementById('auth').style.display='none';
+      document.getElementById('loading').classList.remove('hide');
+      await bootDrive();
+    }
+  });
+  client.requestAccessToken();
+}
+function skipAuth(){
+  useGoogle=false;localStorage.removeItem('cf_ug');
+  document.getElementById('auth').style.display='none';bootLocal();
+}
+async function refreshToken(){
+  return new Promise((resolve,reject)=>{
+    if(typeof google==='undefined'||!google.accounts){reject('no google');return;}
+    const client=google.accounts.oauth2.initTokenClient({
+      client_id:CLIENT_ID,scope:DRIVE_SCOPE,prompt:'',
+      callback:resp=>{
+        if(resp.error){reject(resp.error);return;}
+        gToken=resp.access_token;resolve();
+      }
+    });
+    client.requestAccessToken({prompt:''});
+  });
+}
+async function driveReq(url,opts={},retry=true){
+  const res=await fetch(url,{...opts,headers:{'Authorization':'Bearer '+gToken,...(opts.headers||{})}});
+  if(res.status===401&&retry){
+    try{await refreshToken();}catch(e){useGoogle=false;localStorage.removeItem('cf_ug');setEl('sync-st','⚠ sesión');throw new Error('Token expirado');}
+    return driveReq(url,opts,false);
+  }
+  if(!res.ok)throw new Error('Drive '+res.status);return res;
+}
+async function findFile(){
+  const r=await driveReq(`https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name='${DRIVE_FILE}'&fields=files(id)`);
+  const d=await r.json();return d.files?.[0]?.id||null;
+}
+async function readFile(id){
+  const r=await driveReq(`https://www.googleapis.com/drive/v3/files/${id}?alt=media`);return await r.json();
+}
+async function createFile(c){
+  const meta={name:DRIVE_FILE,parents:['appDataFolder']};
+  const form=new FormData();
+  form.append('metadata',new Blob([JSON.stringify(meta)],{type:'application/json'}));
+  form.append('file',new Blob([JSON.stringify(c)],{type:'application/json'}));
+  const r=await driveReq('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',{method:'POST',body:form});
+  return(await r.json()).id;
+}
+async function updateFile(id,c){
+  await driveReq(`https://www.googleapis.com/upload/drive/v3/files/${id}?uploadType=media`,
+    {method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(c)});
+}
+async function saveDrive(){
+  try{
+    setEl('sync-st','↑...');
+    if(!driveFileId)driveFileId=await findFile();
+    if(driveFileId)await updateFile(driveFileId,ST);
+    else driveFileId=await createFile(ST);
+    const t=new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+    setEl('sync-st','✓ '+t);lsave();
+  }catch(e){setEl('sync-st','⚠ local');lsave();}
+}
+async function syncNow(){
+  if(useGoogle){toast('Guardando...',900);await saveDrive();toast('Sincronizado ✓');}
+  else{lsave();toast('Guardado ✓');}
+}
+
+/* ═══ BOOT ═══ */
+function ensureState(s){
+  if(!s.pagos)s.pagos=[];
+  if(s.apoyo===undefined)s.apoyo=0;
+  if(!s.nota)s.nota='';
+  if(!s.metas)s.metas=[];
+  if(!s.months||s.months.length!==12)s.months=initST().months;
+  if(!s.invItems)s.invItems=JSON.parse(JSON.stringify(DEF_INV));
+  // Migration: add White Card if not present
+  if(s.invItems&&!s.invItems.some(x=>x.c&&x.c.includes('White Card'))){
+    const ei=s.invItems.findIndex(x=>x.c&&x.c.includes('emergencia'));
+    const wc={c:'White Card / Forklift',u:0,a:0,d:'Licencia trabajo en altura/maquinaria'};
+    if(ei>=0)s.invItems.splice(ei,0,wc);else s.invItems.push(wc);
+  }
+  s.months.forEach(m=>{if(!m.horas)m.horas=[0,0,0,0,0];});
+  return s;
+}
+let _modalResolve=null;
+function showModal(title,msg,confirmLabel='Confirmar',danger=true){
+  return new Promise(resolve=>{
+    _modalResolve=resolve;
+    setEl('modal-title',title);
+    setEl('modal-msg',msg);
+    const btn=document.getElementById('modal-confirm-btn');
+    btn.textContent=confirmLabel;
+    btn.className='btn'+(danger?' r':'');
+    const overlay=document.getElementById('modal-overlay');
+    overlay.style.display='flex';
+    // slide up animation
+    const box=document.getElementById('modal-box');
+    box.style.transform='translateY(100%)';
+    box.style.transition='transform .25s ease';
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{box.style.transform='translateY(0)'}));
+  });
+}
+function modalResolve(val){
+  const overlay=document.getElementById('modal-overlay');
+  const box=document.getElementById('modal-box');
+  box.style.transform='translateY(100%)';
+  setTimeout(()=>{overlay.style.display='none';},250);
+  if(_modalResolve){_modalResolve(val);_modalResolve=null;}
+  if(val&&navigator.vibrate)navigator.vibrate(10);
+}
+// Close on overlay tap
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('modal-overlay').addEventListener('click',e=>{
+    if(e.target.id==='modal-overlay')modalResolve(false);
+  });
+});
+function setLoadingProgress(pct,msg){
+  const bar=document.getElementById('loading-bar');
+  const lbl=document.getElementById('loading-msg');
+  if(bar)bar.style.width=pct+'%';
+  if(lbl&&msg)lbl.textContent=msg;
+}
+async function bootDrive(){
+  try{
+    driveFileId=await findFile();
+    if(driveFileId){
+      ST=ensureState(await readFile(driveFileId));
+      setEl('sync-st','✓ Drive');toast('Cargado desde Drive ✓',2000);
+    }else{ST=ensureState(lload()||initST());setEl('sync-st','nuevo');}
+  }catch(e){ST=ensureState(lload()||initST());setEl('sync-st','⚠ local');}
+  finishBoot();
+}
+function bootLocal(){ST=ensureState(lload()||initST());setEl('sync-st','local');finishBoot();}
+function finishBoot(){
+  document.getElementById('loading').classList.add('hide');
+  document.getElementById('pago-f').value=new Date().toISOString().slice(0,10);
+  renderTC();updateAll();updateTC();
+  setInterval(updateTC,30*60*1000);
+  if(useGoogle)setInterval(saveDrive,3*60*1000);
+}
+function sched(){
+  lsave();
+  if(saveT)clearTimeout(saveT);
+  saveT=setTimeout(()=>{if(useGoogle)saveDrive();else lsave();},2000);
+}
+
+/* ═══ TIPO DE CAMBIO ═══ */
+async function fetchTC(){
+  const apis=[
+    ()=>fetch('https://open.er-api.com/v6/latest/AUD').then(r=>r.json()).then(d=>{if(d.result==='success')return d.rates?.USD;throw 0;}),
+    ()=>fetch('https://api.exchangerate-api.com/v4/latest/AUD').then(r=>r.json()).then(d=>d.rates?.USD),
+    ()=>fetch('https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/aud/usd.json').then(r=>r.json()).then(d=>d.usd),
+    ()=>fetch('https://api.frankfurter.app/latest?from=AUD&to=USD').then(r=>r.json()).then(d=>d.rates?.USD),
+  ];
+  for(const fn of apis){try{const v=await fn();if(v&&v>.4&&v<1.2)return +v.toFixed(6);}catch(e){}}
+  return null;
+}
+async function updateTC(){
+  const dot=document.getElementById('tc-dot');
+  dot.style.background='#f59e0b';dot.classList.remove('live');
+  const v=await fetchTC();
+  if(v){ST.tc=v;ST.tcTime=new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});sched();dot.style.background='#4ade80';dot.classList.add('live');}
+  else dot.style.background='#f87171';
+  renderTC();updateAll();
+}
+function renderTC(){
+  const t=ST.tc||.63;
+  const inv=(1/t).toFixed(4);
+  setEl('tc-v',`${t.toFixed(4)}`);
+  setEl('tc-inv',inv);setEl('tc-inv-dash',inv);
+  const inp=document.getElementById('tc-inp');
+  if(inp&&document.activeElement!==inp)inp.value=t.toFixed(4);
+  setEl('tc-src',ST.tcTime?'auto':'manual');
+}
+function manualTC(){
+  const v=+document.getElementById('tc-inp').value;
+  if(v>.2&&v<2){ST.tc=v;sched();renderTC();updateAll();}
+}
+
+/* ═══ CALCS ═══ */
+const tc=()=>ST.tc||.63;
+const a2u=n=>n*tc();
+const u2a=n=>n/tc();
+const mSal=i=>(ST.months[i].semanas||[]).reduce((a,b)=>a+b,0);
+const mHrs=i=>(ST.months[i].horas||[]).reduce((a,b)=>a+b,0);
+const mIng=i=>mSal(i)+IK.reduce((s,k)=>s+(ST.months[i].ingresos[k]||0),0);
+const mGas=i=>GK.reduce((s,k)=>s+(ST.months[i].gastos[k]||0),0);
+const mAho=i=>mIng(i)-mGas(i);
+const tGan=()=>MN.reduce((_,__,i)=>_+mIng(i),0);
+const tGas=()=>MN.reduce((_,__,i)=>_+mGas(i),0);
+const tAho=()=>tGan()-tGas();
+const tHrs=()=>MN.reduce((_,__,i)=>_+mHrs(i),0);
+const tIU=()=>ST.invItems.reduce((s,x)=>s+(+x.u||0),0);
+const tIA=()=>ST.invItems.reduce((s,x)=>s+((+x.a||0)||(+x.u?u2a(+x.u):0)),0);
+const tPag=()=>(ST.pagos||[]).reduce((s,p)=>s+(+p.montoAUD||0),0);
+const tMetasAsig=()=>(ST.metas||[]).reduce((s,m)=>s+(+m.asig||0),0);
+
+/*
+  DEUDA LOGIC (FIXED):
+  - deudaBruta = inversión inicial (fija) + gastos en meses sin ningún ingreso
+  - deudaPendiente = max(0, deudaBruta - pagosRealizados)  ← solo baja con pagos manuales
+  - caja = max(0, ahorroAcumulado - pagosRealizados)       ← sube con el sueldo
+  Los ingresos semanales NO descuentan la deuda automáticamente.
+  Solo descuenta cuando registrás un pago en la sección Deuda.
+*/
+function calcD(){
+  const invA=tIA();
+  const apoyo=+(ST.apoyo||0);  // apoyo fijo manual — no cambia con los meses
+  const bruta=invA+apoyo;
+  const pag=tPag();
+  const pend=Math.max(0,bruta-pag);
+  const caja=Math.max(0,tAho()+apoyo-pag);
+  return{invA,gsi:apoyo,bruta,pag,pend,caja};
+}
+
+/* ═══ FORMAT ═══ */
+function fn(n,d=0){
+  if(isNaN(n)||n==null)return'—';
+  const a=Math.abs(n).toLocaleString('en-AU',{minimumFractionDigits:d,maximumFractionDigits:d});
+  return n<0?'-'+a:a;
+}
+const fA=(n,d=0)=>`AUD ${fn(n,d)}`;
+const fU=(n,d=0)=>`USD ${fn(n,d)}`;
+const fA2=n=>`AUD ${fn(n,2)}`;
+const fU2=n=>`USD ${fn(n,2)}`;
+const fN=(n,d=0)=>fn(n,d);
+function setEl(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
+function fDate(f){if(!f)return'—';try{return new Date(f+'T12:00:00').toLocaleDateString('es-AR',{day:'2-digit',month:'short',year:'numeric'});}catch{return f;}}
+function toast(msg,dur=2000){const e=document.getElementById('toast');e.textContent=msg;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),dur);}
+
+/* ═══ UPDATE ALL ═══ */
+function updateAll(){renderTC();updDash();updDeuda();updInv();updAnual();updMetas();updFoot();}
+
+function updFoot(){
+  const aho=tAho(),d=calcD();
+  const ae=document.getElementById('f-a');
+  ae.textContent=fA(aho);ae.className='fi-val '+(aho>=0?'g':'r');
+  setEl('f-c',fA(d.caja));setEl('f-d',fA(d.pend));
+}
+
+function updDash(){
+  const gan=tGan(),gas=tGas(),aho=tAho(),invA=tIA(),invU=tIU(),d=calcD();
+  setEl('d-ga',fA(gan));setEl('d-gu',fU(a2u(gan)));
+  setEl('d-gsa',fA(gas));setEl('d-gsu',fU(a2u(gas)));
+  const ae=document.getElementById('d-aa');
+  ae.textContent=fA(aho);ae.className='stat-val '+(aho>=0?'g':'r');
+  setEl('d-au',fU(a2u(aho)));
+  setEl('d-ia',fA(invA));setEl('d-iu',fU(invU));
+  setEl('d-ca',fA2(d.caja));setEl('d-cau',fU2(a2u(d.caja)));
+  setEl('d-da',fA2(d.pend));setEl('d-du',fU2(Math.max(0,tIU()+a2u(d.gsi)-a2u(d.pag))));
+  const pct=d.bruta>0?Math.min(100,d.pag/d.bruta*100):0;
+  setEl('d-dapct',pct.toFixed(0)+'%');
+  const pb=document.getElementById('d-pbar');
+  pb.style.width=pct.toFixed(1)+'%';pb.className='progbar-fill '+(pct>=100?'':'a');
+  let act=0;for(let i=0;i<12;i++)if(mGas(i)||mIng(i))act++;
+  setEl('d-period',act+' mes'+(act!==1?'es':'')+' activos');
+  let lm=-1;for(let i=11;i>=0;i--){if(mGas(i)||mIng(i)){lm=i;break;}}
+  const le=document.getElementById('d-last-content'),ln=document.getElementById('d-lm-name');
+  if(lm<0){le.innerHTML='<div class="empty">Sin datos aún</div>';setEl('d-lm-name','—');return;}
+  setEl('d-lm-name',MN[lm]);
+  const ing=mIng(lm),g2=mGas(lm),aho2=mAho(lm);
+  le.innerHTML=`<table class="ledger"><tbody>
+    <tr><td class="label-cell">Ingresos</td><td class="num pos">${fA2(ing)}</td><td class="num dim">${fU2(a2u(ing))}</td></tr>
+    <tr><td class="label-cell">Gastos</td><td class="num neg">${fA2(g2)}</td><td class="num dim">${fU2(a2u(g2))}</td></tr>
+    <tr class="total"><td class="bold">Ahorro del mes</td><td class="num bold ${aho2>=0?'pos':'neg'}">${fA2(aho2)}</td><td class="num dim">${fU2(a2u(aho2))}</td></tr>
+  </tbody></table>`;
+}
+
+function updDeuda(){
+  const d=calcD();
+  const pct=d.bruta>0?Math.min(100,d.pag/d.bruta*100):0;
+  setEl('deu-chip',fA2(d.pend));
+  document.getElementById('deu-chip').className='chip '+(d.pend<=0?'g':'r');
+  setEl('dl-inv',fN(d.invA,2));setEl('dl-invu',fN(tIU(),2));
+  // apoyo input — no sobreescribir si el usuario está escribiendo
+  const apoyoInp=document.getElementById('apoyo-inp');
+  if(apoyoInp&&document.activeElement!==apoyoInp)apoyoInp.value=ST.apoyo||'';
+  setEl('dl-gsiu',fN(a2u(d.gsi),2));
+  setEl('dl-bruta',fN(d.bruta,2));setEl('dl-brutau',fN(tIU()+a2u(d.gsi),2));
+  setEl('dl-pag',fN(d.pag,2));setEl('dl-pagu',fN(a2u(d.pag),2));
+  setEl('dl-pend',fN(d.pend,2));setEl('dl-pendu',fN(Math.max(0,tIU()+a2u(d.gsi)-a2u(d.pag)),2));
+  const pe=document.getElementById('dl-pend');
+  if(pe)pe.className='num bold '+(d.pend<=0?'pos':'neg');
+  document.getElementById('deu-bar').style.width=pct.toFixed(1)+'%';
+  setEl('deu-pct',pct.toFixed(1)+'%');
+  setEl('deu-ca',fA2(d.caja));setEl('deu-cau',fU2(a2u(d.caja)));
+  const nota=document.getElementById('nota');
+  if(nota&&document.activeElement!==nota)nota.value=ST.nota||'';
+  // preview
+  const monto=+document.getElementById('pago-m')?.value||0;
+  const prev=document.getElementById('pago-preview');
+  if(prev&&monto>0){
+    const pendAfter=Math.max(0,d.pend-monto);
+    const cajaAfter=Math.max(0,d.caja-monto);
+    prev.innerHTML=`Deuda restante: <strong>${fA2(pendAfter)}</strong> · Caja restante: <strong>${fA2(cajaAfter)}</strong>`;
+    prev.style.color=pendAfter<=0?'var(--green)':'var(--ink3)';
+  }else if(prev)prev.textContent='';
+  // pagos list
+  const pl=document.getElementById('pag-list');
+  if(!ST.pagos?.length){pl.innerHTML='<div class="empty">Sin pagos registrados.</div>';setEl('deu-np','0 pagos');return;}
+  const tot=ST.pagos.reduce((s,p)=>s+(+p.montoAUD||0),0);
+  pl.innerHTML=`<div style="padding:8px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--ink4)"><span>${ST.pagos.length} pago${ST.pagos.length!==1?'s':''}</span><span style="color:var(--green);font-weight:600">${fA2(tot)}</span></div>`+
+    [...ST.pagos].reverse().map((p,ri)=>{
+      const idx=ST.pagos.length-1-ri;
+      return`<div class="pay-row"><div><div class="pay-date">${fDate(p.fecha)}</div><div class="pay-desc">${esc(p.desc||'Pago a padres')}</div></div><div><div class="pay-aud">${fA2(p.montoAUD)}</div><div class="pay-usd">${fU2(a2u(p.montoAUD))}</div><button class="btn r sm" style="margin-top:5px" onclick="delPag(${idx})">✕</button></div></div>`;
+    }).join('');
+  setEl('deu-np',ST.pagos.length+' pago'+(ST.pagos.length!==1?'s':''));
+  calcCuota();
+}
+async function regPago(){
+  const f=document.getElementById('pago-f').value,m=+document.getElementById('pago-m').value||0,desc=document.getElementById('pago-d').value.trim();
+  if(!m){alert('Ingresá un monto.');return;}
+  if(!f){alert('Ingresá la fecha.');return;}
+  const d=calcD();
+  if(m>d.caja+.01){
+    const ok=await showModal('Monto alto',`El monto (${fA2(m)}) supera tu caja disponible (${fA2(d.caja)}).\n¿Registrar igual?`,'Registrar igual',true);
+    if(!ok)return;
+  }
+  if(!ST.pagos)ST.pagos=[];
+  ST.pagos.push({id:Date.now(),fecha:f,montoAUD:m,desc:desc||'Pago a padres'});
+  sched();
+  document.getElementById('pago-f').value=new Date().toISOString().slice(0,10);
+  document.getElementById('pago-m').value='';document.getElementById('pago-d').value='';
+  if(navigator.vibrate)navigator.vibrate([10,50,10]);
+  updateAll();toast('Pago registrado ✓');
+}
+async function delPag(idx){
+  const p=ST.pagos[idx];if(!p)return;
+  const ok=await showModal('Eliminar pago',`¿Eliminar el pago de ${fA2(p.montoAUD)}?\n${fDate(p.fecha)} · ${p.desc||'Pago a padres'}`,'Eliminar',true);
+  if(ok){ST.pagos.splice(idx,1);sched();updateAll();}
+}
+
+function calcCuota(){
+  const m=+document.getElementById('cuota-m')?.value||0;
+  const d=calcD();
+  const re=document.getElementById('cuota-r'),sub=document.getElementById('cuota-s');
+  if(!re)return;
+  if(m>0&&d.pend>0){
+    const cuota=d.pend/m;
+    re.textContent=fA2(cuota);
+    if(sub)sub.textContent=`${fU2(a2u(cuota))} / mes · total ${fA(d.pend)} en ${m} mes${m!==1?'es':''}`;
+  }else{
+    re.textContent='—';
+    if(sub)sub.textContent=d.pend<=0?'¡Deuda saldada! 🎉':'Ingresá la cantidad de meses';
+  }
+}
+
+function updInvInline(i){
+  // Update only the paired field and totals — no re-render, no lag
+  const it=ST.invItems[i];
+  const au=document.getElementById('inv-a-'+i);
+  const uu=document.getElementById('inv-u-'+i);
+  if(au&&document.activeElement!==au)au.value=it.a||'';
+  if(uu&&document.activeElement!==uu)uu.value=it.u||'';
+  setEl('inv-tu',fU2(tIU()));setEl('inv-ta',fA2(tIA()));
+  // Update debt display too
+  const d=calcD();
+  setEl('deu-chip',fA2(d.pend));
+  setEl('dl-inv',fN(d.invA,2));setEl('dl-invu',fN(tIU(),2));
+  setEl('dl-bruta',fN(d.bruta,2));setEl('dl-brutau',fN(tIU()+a2u(d.gsi),2));
+  setEl('dl-pend',fN(d.pend,2));setEl('dl-pendu',fN(Math.max(0,tIU()+a2u(d.gsi)-a2u(d.pag)),2));
+  setEl('f-d',fA(d.pend));setEl('d-ia',fA(tIA()));setEl('d-iu',fU(tIU()));
+}
+function updInv(){
+  // Auto-fill AUD from USD for items that only have USD
+  ST.invItems.forEach(x=>{if((+x.u)>0&&!(+x.a))x.a=+((+x.u/tc()).toFixed(2));});
+  const tb=document.getElementById('inv-body');tb.innerHTML='';
+  ST.invItems.forEach((it,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td style="min-width:130px"><input class="inp-text" value="${esc(it.c)}" oninput="ST.invItems[${i}].c=this.value;sched()"></td>
+      <td style="min-width:80px"><input class="inp-num" type="number" step=".01" inputmode="decimal" value="${it.u||''}" placeholder="0.00" id="inv-u-${i}"
+        oninput="ST.invItems[${i}].u=+this.value||0;ST.invItems[${i}].a=+((+this.value||0)/tc()).toFixed(2);sched();updInvInline(${i})"></td>
+      <td style="min-width:90px"><input class="inp-num" type="number" step=".01" inputmode="decimal" value="${it.a||''}" placeholder="0.00" id="inv-a-${i}"
+        oninput="ST.invItems[${i}].a=+this.value||0;ST.invItems[${i}].u=+((+this.value||0)*tc()).toFixed(2);sched();updInvInline(${i})"></td>
+      <td style="min-width:130px"><input class="inp-text" value="${esc(it.d||'')}" placeholder="Nota..." oninput="ST.invItems[${i}].d=this.value;sched()"></td>
+      <td><button class="btn r sm" onclick="ST.invItems.splice(${i},1);sched();updInv();updateAll()">✕</button></td>`;
+    tb.appendChild(tr);
+  });
+  setEl('inv-tu',fU2(tIU()));setEl('inv-ta',fA2(tIA()));
+}
+function addInv(){ST.invItems.push({c:'Nuevo ítem',u:0,a:0,d:''});sched();updInv();updateAll();}
+
+/* ═══ METAS ═══ */
+function updMetas(){
+  const d=calcD();
+  const libre=Math.max(0,d.caja-tMetasAsig());
+  setEl('meta-caja',fA(d.caja));setEl('meta-libre',fA(libre));
+  const ml=document.getElementById('metas-list');
+  if(!ST.metas?.length){ml.innerHTML='<div class="empty">No hay metas. Agregá una abajo.</div>';return;}
+  ml.innerHTML=ST.metas.map((m,i)=>{
+    const pct=m.obj>0?Math.min(100,m.asig/m.obj*100):0;
+    const color=pct>=100?'var(--green)':pct>=50?'var(--amber)':'var(--blue)';
+    const falta=m.obj>m.asig?`Faltan ${fA(m.obj-m.asig)}`:'¡Lograda! 🎉';
+    return`<div class="meta-row" style="border:1px solid var(--line);margin:8px 16px;padding:14px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
+        <div class="meta-name">${esc(m.nombre)}</div>
+        <div style="font-family:var(--mono);font-size:16px;font-weight:700;color:${color}">${pct.toFixed(0)}%</div>
+      </div>
+      <div class="meta-bar-wrap" style="margin-bottom:10px"><div class="meta-bar-fill" style="width:${pct.toFixed(1)}%;background:${color}"></div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+        <div>
+          <div style="font-family:var(--mono);font-size:8px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--ink4);margin-bottom:4px">Asignado AUD</div>
+          <input type="number" step="1" inputmode="numeric" class="inp-big" style="font-size:16px"
+            value="${m.asig||''}" placeholder="0"
+            oninput="ST.metas[${i}].asig=+this.value||0;sched();updMetasInline(${i})">
+        </div>
+        <div>
+          <div style="font-family:var(--mono);font-size:8px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--ink4);margin-bottom:4px">Objetivo AUD</div>
+          <input type="number" step="1" inputmode="numeric" class="inp-big" style="font-size:16px"
+            value="${m.obj||''}" placeholder="0"
+            oninput="ST.metas[${i}].obj=+this.value||0;sched();updMetasInline(${i})">
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-family:var(--mono);font-size:11px;color:var(--ink4)" id="meta-falta-${i}">${falta}</span>
+        <button class="btn r sm" onclick="delMeta(${i})">Eliminar</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function updMetasInline(i){
+  const m=ST.metas[i];
+  if(!m)return;
+  const pct=m.obj>0?Math.min(100,m.asig/m.obj*100):0;
+  const color=pct>=100?'var(--green)':pct>=50?'var(--amber)':'var(--blue)';
+  const falta=m.obj>m.asig?`Faltan ${fA(m.obj-m.asig)}`:'¡Lograda! 🎉';
+  // update bar
+  const row=document.querySelectorAll('.meta-row')[i];
+  if(row){
+    const bar=row.querySelector('.meta-bar-fill');
+    if(bar){bar.style.width=pct.toFixed(1)+'%';bar.style.background=color;}
+    const pctEl=row.querySelector('[style*="font-size:16px"]')?.parentElement?.parentElement?.querySelector('div:last-child');
+    // update pct label
+    const labels=row.querySelectorAll('[style*="font-weight:700"]');
+    labels.forEach(el=>{if(el.textContent.includes('%'))el.textContent=pct.toFixed(0)+'%';el.style.color=color;});
+  }
+  setEl('meta-falta-'+i,falta);
+  // update header libre/caja
+  const d=calcD();
+  const libre=Math.max(0,d.caja-tMetasAsig());
+  setEl('meta-caja',fA(d.caja));setEl('meta-libre',fA(libre));
+}
+function addMeta(){
+  const nombre=document.getElementById('meta-nombre').value.trim();
+  const obj=+document.getElementById('meta-obj').value||0;
+  const asig=+document.getElementById('meta-asig').value||0;
+  if(!nombre){alert('Ingresá un nombre.');return;}
+  if(!obj){alert('Ingresá el objetivo en AUD.');return;}
+  if(!ST.metas)ST.metas=[];
+  ST.metas.push({nombre,obj,asig});sched();
+  document.getElementById('meta-nombre').value='';
+  document.getElementById('meta-obj').value='';
+  document.getElementById('meta-asig').value='';
+  updMetas();toast('Meta agregada ✓');
+}
+async function delMeta(idx){const m=ST.metas[idx];if(!m)return;const ok=await showModal('Eliminar meta',`¿Eliminar la meta "${m.nombre}"?`,'Eliminar',true);if(ok){ST.metas.splice(idx,1);sched();updMetas();}}
+
+/* ═══ ANUAL ═══ */
+function updAnual(){
+  let ti=0,tg=0,ta=0,bA=-Infinity,wA=Infinity,bM='—',wM='—',act=0;
+  const tb=document.getElementById('rs-body');tb.innerHTML='';
+  const barIng=[],barGas=[],barAho=[];
+  MN.forEach((m,i)=>{
+    const ing=mIng(i),gas=mGas(i),aho=mAho(i);
+    if(ing||gas){act++;if(aho>bA){bA=aho;bM=MS[i];}if(aho<wA){wA=aho;wM=MS[i];}}
+    ti+=ing;tg+=gas;ta+=aho;
+    barIng.push(ing);barGas.push(gas);barAho.push(aho);
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="font-family:var(--mono)">${MS[i]}</td><td class="num ${ing?'pos dim':''}">${ing?fA(ing):'—'}</td><td class="num ${gas?'neg dim':''}">${gas?fA(gas):'—'}</td><td class="num ${aho<0?'neg':aho>0?'pos':''} ${ing||gas?'':'dim'}">${ing||gas?fA(aho):'—'}</td><td class="num dim">${ing||gas?fU(a2u(aho)):'—'}</td>`;
+    tb.appendChild(tr);
+  });
+  const dv=Math.max(1,act);
+  setEl('rs-ti',fA(ti));setEl('rs-tg',fA(tg));setEl('rs-ta',fA(ta));setEl('rs-tu',fU(a2u(ta)));
+  setEl('rs-pi',fA(ti/dv));setEl('rs-pg',fA(tg/dv));setEl('rs-pa',fA(ta/dv));setEl('rs-pau',fU(a2u(ta/dv)));
+  setEl('rs-mej',bA>-Infinity?fA(bA):'—');setEl('rs-mejm',bM);
+  setEl('rs-peor',wA<Infinity?fA(wA):'—');setEl('rs-peorm',wM);
+  setEl('rs-act',act+'/12');
+  const hrs=tHrs();setEl('rs-tarifa',hrs>0?fn(ti/hrs,2):'—');
+
+  // category chart
+  const catTotals=GK.map((k,ki)=>({k,lbl:GL[ki],val:MN.reduce((_,__,i)=>_+(ST.months[i].gastos[k]||0),0)}))
+    .filter(x=>x.val>0).sort((a,b)=>b.val-a.val);
+  setEl('rs-gtotal',`${fA(tg)} total`);
+  const cc=document.getElementById('cat-chart');
+  if(!catTotals.length){cc.innerHTML='<div class="empty">Sin gastos registrados aún</div>';}
+  else{
+    const max=catTotals[0].val;
+    const colors=['var(--red)','var(--ink2)','var(--amber)','var(--green)','var(--blue)','#7c3aed','#0891b2','#db2777','#d97706','#64748b'];
+    cc.innerHTML=catTotals.map((c,idx)=>{
+      const pct=max>0?(c.val/max*100).toFixed(1):0;
+      const pctTotal=tg>0?(c.val/tg*100).toFixed(0):0;
+      return`<div style="display:flex;align-items:center;gap:10px;padding:7px 16px;border-bottom:1px solid var(--line)">
+        <div style="width:110px;flex-shrink:0;font-family:var(--mono);font-size:10px;color:var(--ink3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.lbl}</div>
+        <div style="flex:1;height:4px;background:var(--bg2);overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:${colors[idx%colors.length]};transition:width .6s ease"></div>
+        </div>
+        <div style="width:80px;text-align:right;font-family:var(--mono);font-size:11px;font-weight:600;color:var(--ink);flex-shrink:0">${fA(c.val,0)}</div>
+        <div style="width:30px;text-align:right;font-family:var(--mono);font-size:10px;color:var(--ink4);flex-shrink:0">${pctTotal}%</div>
+      </div>`;
+    }).join('');
+  }
+
+  // bar chart
+  const canvas=document.getElementById('bar-chart');if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const W=canvas.offsetWidth||300,H=130;
+  canvas.width=W*window.devicePixelRatio;canvas.height=H*window.devicePixelRatio;
+  canvas.style.width=W+'px';canvas.style.height=H+'px';
+  ctx.scale(window.devicePixelRatio,window.devicePixelRatio);
+  const PAD={top:10,right:10,bottom:22,left:46};
+  const cW=W-PAD.left-PAD.right,cH=H-PAD.top-PAD.bottom;
+  const allVals=[...barIng,...barGas.map(v=>-v),...barAho];
+  const maxV=Math.max(...allVals.filter(v=>v>0),1);
+  const minV=Math.min(...allVals.filter(v=>v<0),0);
+  const range=maxV-minV||1;
+  const toY=v=>PAD.top+cH*(1-(v-minV)/range);
+  const bw=cW/12;
+  ctx.fillStyle='#ffffff';ctx.fillRect(0,0,W,H);
+  const zy=toY(0);
+  ctx.strokeStyle='#d0cfc8';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(PAD.left,zy);ctx.lineTo(W-PAD.right,zy);ctx.stroke();
+  ctx.strokeStyle='#eae9e4';ctx.lineWidth=.5;
+  [.25,.5,.75,1].forEach(f=>{
+    const y=PAD.top+cH*f;
+    ctx.beginPath();ctx.moveTo(PAD.left,y);ctx.lineTo(W-PAD.right,y);ctx.stroke();
+  });
+  MS.forEach((m,i)=>{
+    const x=PAD.left+i*bw,bwI=bw*.55,xOff=(bw-bwI)/2;
+    if(barIng[i]>0){const y=toY(barIng[i]),h=zy-y;ctx.fillStyle='rgba(22,101,52,.15)';ctx.fillRect(x+xOff,y,bwI,h);ctx.fillStyle='#166534';ctx.fillRect(x+xOff,y,2,h);}
+    if(barGas[i]>0){const y=zy,h=toY(-barGas[i])-zy;ctx.fillStyle='rgba(153,27,27,.12)';ctx.fillRect(x+xOff,y,bwI,h);ctx.fillStyle='#991b1b';ctx.fillRect(x+xOff+bwI-2,y,2,h);}
+    if(barIng[i]||barGas[i]){const sy=toY(barAho[i]);ctx.fillStyle=barAho[i]>=0?'#166534':'#991b1b';ctx.beginPath();ctx.arc(x+bw/2,sy,2.5,0,Math.PI*2);ctx.fill();}
+    ctx.fillStyle='#aaa';ctx.font=`500 ${Math.max(8,Math.min(9,bw*.55))}px JetBrains Mono,monospace`;
+    ctx.textAlign='center';ctx.fillText(m.slice(0,1),x+bw/2,H-6);
+  });
+  ctx.fillStyle='#aaa';ctx.font='8px JetBrains Mono,monospace';ctx.textAlign='right';
+  [0,.5,1].forEach(f=>{
+    const v=minV+range*f,y=toY(v);
+    if(Math.abs(y-PAD.top)<8||Math.abs(y-(H-PAD.bottom))<8)return;
+    ctx.fillText((v>=0?'':'-')+fN(Math.abs(v),0),PAD.left-4,y+3);
+  });
+}
+
+/* ═══ MESES ═══ */
+let cM=new Date().getMonth(); // mes actual por defecto
+function renderStrip(){
+  const c=document.getElementById('mstrip');c.innerHTML='';
+  MN.forEach((m,i)=>{
+    const hd=mIng(i)||mGas(i);
+    const el=document.createElement('div');
+    el.className='mtab'+(i===cM?' on':'')+(hd?' has':'');
+    el.innerHTML=MS[i]+(hd?'<span class="mdot"></span>':'');
+    el.onclick=()=>{cM=i;renderStrip();renderMes();};
+    c.appendChild(el);
+  });
+  // scroll al mes activo
+  const active=c.querySelector('.mtab.on');
+  if(active)active.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+}
+function renderMes(){
+  const i=cM,m=ST.months[i];
+  const sal=mSal(i),ing=mIng(i),gas=mGas(i),aho=mAho(i),hrs=mHrs(i);
+  const tarifa=hrs>0&&ing>0?(ing/hrs).toFixed(2):'—';
+  const sinI=ing===0&&gas>0;
+  const bon=aho>0&&ing>0;
+  const bandClass=sinI?'band r':bon?'band g':'';
+  const bandInner=sinI
+    ?`<div><div class="band-lbl">Mes sin ingresos</div><div style="font-family:var(--mono);font-size:11px;color:var(--red)">${fA(gas)} gastados suman a la deuda bruta.</div></div>`
+    :bon
+    ?`<div><div class="band-lbl">Mes positivo</div><div style="font-family:var(--mono);font-size:11px;color:var(--green)">${fA(aho)} acumulados en tu caja.</div></div>`
+    :'';
+
+  document.getElementById('mes-cnt').innerHTML=`
+    <div id="mes-band-${i}" class="${bandClass}" style="${bandClass?'margin-bottom:0':''}">${bandInner}</div>
+
+    <table class="ledger"><tbody>
+      <tr class="subtotal"><td class="bold" style="font-family:var(--mono)">${MN[i]}</td><td class="num bold ${aho>=0?'pos':'neg'}" id="m-aho-${i}">${fA2(aho)}</td><td class="num dim">${fU2(a2u(aho))}</td></tr>
+      <tr><td class="label-cell italic">Ingresos totales</td><td class="num pos" id="m-ing-${i}">${fA2(ing)}</td><td class="num dim">${fU2(a2u(ing))}</td></tr>
+      <tr><td class="label-cell italic">Gastos totales</td><td class="num neg" id="m-gas-${i}">${fA2(gas)}</td><td class="num dim" id="m-gasu-${i}">${fU2(a2u(gas))}</td></tr>
+      <tr><td class="label-cell italic">Horas trabajadas</td><td class="num dim" style="font-family:var(--mono)" id="m-hrs-${i}">${hrs>0?hrs+'h':'—'}</td><td class="num dim" id="m-tarifa-${i}">${hrs>0?tarifa+' AUD/h':'—'}</td></tr>
+    </tbody></table>
+
+    <div class="sh"><div class="sh-row"><span class="sh-title">Salario semanal</span><span class="sh-sub" id="salb-${i}">${fA2(sal)}</span></div></div>
+    <div class="week-grid">${[0,1,2,3,4].map(s=>`
+      <div class="week-cell"><div class="week-lbl">Sem ${s+1}</div>
+        <input class="week-inp" type="number" step=".01" inputmode="decimal" pattern="[0-9]*" value="${m.semanas[s]||''}" placeholder="0"
+          oninput="ST.months[${i}].semanas[${s}]=+this.value||0;sched();updMesInline(${i});">
+      </div>`).join('')}
+    </div>
+    <div style="padding:6px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--ink4)">
+      <span>Total mensual</span><span id="sal-foot-${i}" style="color:var(--green);font-weight:600">${fA2(sal)} · ${fU2(a2u(sal))}</span>
+    </div>
+
+    <div class="sh"><div class="sh-row"><span class="sh-title">Horas trabajadas</span><span class="sh-sub" id="hrsb-${i}">${hrs>0?hrs+'h total':''}</span></div></div>
+    <div class="hrs-grid">${[0,1,2,3,4].map(s=>`
+      <div class="hrs-cell"><div class="week-lbl">Sem ${s+1}</div>
+        <input class="hrs-inp" type="number" step="1" inputmode="numeric" value="${m.horas[s]||''}" placeholder="0"
+          oninput="ST.months[${i}].horas[${s}]=+this.value||0;sched();updMesInline(${i});">
+      </div>`).join('')}
+    </div>
+    <div style="padding:6px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--ink4)">
+      <span>Total horas</span><span id="hrs-foot-${i}" style="color:${hrs>0?'var(--blue)':'var(--ink4)'};font-weight:600">${hrs>0?hrs+'h · AUD '+tarifa+'/h':'Sin horas cargadas'}</span>
+    </div>
+
+    <div class="sh"><div class="sh-row"><span class="sh-title">Otros ingresos</span></div></div>
+    <table class="ledger"><tbody>${IK.map((k,ki)=>`
+      <tr>
+        <td class="label-cell" style="min-width:130px">${IL[ki]}</td>
+        <td style="min-width:100px"><input class="inp-num" type="number" step=".01" inputmode="decimal" value="${m.ingresos[k]||''}" placeholder="—"
+          oninput="ST.months[${i}].ingresos['${k}']=+this.value||0;sched();updMesInline(${i});"></td>
+        <td class="num dim" style="min-width:80px" id="ing-usd-${i}-${ki}">${m.ingresos[k]?fU2(a2u(m.ingresos[k])):'—'}</td>
+      </tr>`).join('')}
+    </tbody></table>
+
+    <div class="sh"><div class="sh-row"><span class="sh-title">Gastos</span></div></div>
+    <table class="ledger"><tbody>${GK.map((k,ki)=>`
+      <tr>
+        <td class="label-cell" style="min-width:130px">${GL[ki]}</td>
+        <td style="min-width:100px"><input class="inp-num" type="number" step=".01" inputmode="decimal" value="${m.gastos[k]||''}" placeholder="—"
+          oninput="ST.months[${i}].gastos['${k}']=+this.value||0;sched();updMesInline(${i});updDash();"></td>
+        <td class="num dim" style="min-width:80px" id="usd-${i}-${ki}">${m.gastos[k]?fU2(a2u(m.gastos[k])):'—'}</td>
+        <td style="min-width:120px"><input class="inp-text" value="${esc(m.notas[k]||'')}" placeholder="nota..."
+          oninput="ST.months[${i}].notas['${k}']=this.value;sched()"></td>
+      </tr>`).join('')}
+      <tr class="total"><td class="bold">Total gastos</td><td class="num neg bold" id="tot-gas-${i}">${fA2(gas)}</td><td class="num dim" id="tot-gasu-${i}">${fU2(a2u(gas))}</td><td></td></tr>
+    </tbody></table>`;
+}
+
+function updMesInline(i){
+  const gas=mGas(i),ing=mIng(i),aho=mAho(i),sal=mSal(i),hrs=mHrs(i);
+  const tarifa=hrs>0&&ing>0?(ing/hrs).toFixed(2):'—';
+
+  // totals row
+  const t1=document.getElementById('tot-gas-'+i),t2=document.getElementById('tot-gasu-'+i);
+  if(t1)t1.textContent=fA2(gas);if(t2)t2.textContent=fU2(a2u(gas));
+
+  // summary row at top of table
+  const sa=document.getElementById('m-aho-'+i);
+  if(sa){sa.textContent=fA2(aho);sa.className='num bold '+(aho>=0?'pos':'neg');}
+  const sg=document.getElementById('m-gas-'+i);if(sg)sg.textContent=fA2(gas);
+  const sgu=document.getElementById('m-gasu-'+i);if(sgu)sgu.textContent=fU2(a2u(gas));
+  const si=document.getElementById('m-ing-'+i);if(si)si.textContent=fA2(ing);
+
+  // salary / hours badges
+  const sb=document.getElementById('salb-'+i);if(sb)sb.textContent=fA2(sal);
+  const hb=document.getElementById('hrsb-'+i);if(hb)hb.textContent=hrs>0?hrs+'h total':'';
+
+  // hours summary row
+  const hrow=document.getElementById('m-hrs-'+i);if(hrow)hrow.textContent=hrs+'h';
+  const htarifa=document.getElementById('m-tarifa-'+i);if(htarifa)htarifa.textContent=tarifa+' AUD/h';
+
+  // salary total footer line
+  const sfoot=document.getElementById('sal-foot-'+i);
+  if(sfoot)sfoot.textContent=fA2(sal)+' · '+fU2(a2u(sal));
+
+  // hours total footer line
+  const hfoot=document.getElementById('hrs-foot-'+i);
+  if(hfoot)hfoot.textContent=hrs>0?hrs+'h · AUD '+tarifa+'/h':'Sin horas cargadas';
+  const hfootEl=document.getElementById('hrs-foot-'+i);
+  if(hfootEl)hfootEl.style.color=hrs>0?'var(--blue)':'var(--ink4)';
+
+  // status band (sin ingresos / mes positivo)
+  const band=document.getElementById('mes-band-'+i);
+  if(band){
+    const sinI=ing===0&&gas>0,bon=aho>0&&ing>0;
+    band.className=sinI?'band r':bon?'band g':'';
+    band.style.marginBottom=sinI||bon?'0':'';
+    band.innerHTML=sinI
+      ?`<div><div class="band-lbl">Mes sin ingresos</div><div style="font-family:var(--mono);font-size:11px;color:var(--red)">${fA(gas)} gastados suman a la deuda bruta.</div></div>`
+      :bon
+      ?`<div><div class="band-lbl">Mes positivo</div><div style="font-family:var(--mono);font-size:11px;color:var(--green)">${fA(aho)} acumulados en tu caja.</div></div>`
+      :'';
+  }
+
+  // USD cells for each expense category
+  GK.forEach((k,ki)=>{const el=document.getElementById('usd-'+i+'-'+ki);if(el)el.textContent=ST.months[i].gastos[k]?fU2(a2u(ST.months[i].gastos[k])):'—';});
+
+  // USD cells for otros ingresos
+  IK.forEach((k,ki)=>{const el=document.getElementById('ing-usd-'+i+'-'+ki);if(el)el.textContent=ST.months[i].ingresos[k]?fU2(a2u(ST.months[i].ingresos[k])):'—';});
+
+  updFoot();
+}
+
+/* ═══ NAV ═══ */
+function go(name,el){
+  document.querySelectorAll('.pg').forEach(p=>{p.classList.remove('on');p.classList.remove('fade-in');});
+  const pg=document.getElementById('pg-'+name);
+  pg.classList.add('on');
+  // trigger reflow then add animation
+  void pg.offsetWidth;
+  pg.classList.add('fade-in');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  if(el)el.classList.add('on');
+  if(name==='meses'){renderStrip();renderMes();}
+  updateAll();window.scrollTo(0,0);
+  // haptic feedback on iOS
+  if(navigator.vibrate)navigator.vibrate(10);
+}
+
+/* ═══ INIT ═══ */
+function showAuth(){
+  document.getElementById('loading').classList.add('hide');
+  document.getElementById('auth').style.display='flex';
+  document.getElementById('reconect').style.display='none';
+}
+function showReconect(){
+  document.getElementById('loading').classList.add('hide');
+  document.getElementById('auth').style.display='none';
+  document.getElementById('reconect').style.display='flex';
+}
+function showLoading(){
+  document.getElementById('loading').classList.remove('hide');
+  document.getElementById('auth').style.display='none';
+  document.getElementById('reconect').style.display='none';
+}
+function hideAll(){
+  document.getElementById('loading').classList.add('hide');
+  document.getElementById('auth').style.display='none';
+  document.getElementById('reconect').style.display='none';
+}
+
+/* ── TOKEN CACHE ──────────────────────────────────────────────────────────
+   Guardamos el token y su timestamp en localStorage.
+   access_token dura 3600s. Usamos 55min (3300s) como margen seguro.
+   Si el token sigue vivo → entramos directo sin tocar Google.
+   Si expiró → silent login. Si silent falla → pantalla Reconectar (1 tap).
+*/
+const TOKEN_TTL = 3300*1000; // 55 minutos en ms
+function saveToken(t){ localStorage.setItem('cf_tok',t); localStorage.setItem('cf_tok_ts',Date.now()); }
+function loadToken(){ 
+  const t=localStorage.getItem('cf_tok'), ts=+localStorage.getItem('cf_tok_ts')||0;
+  if(t && (Date.now()-ts)<TOKEN_TTL) return t;
+  return null;
+}
+function clearToken(){ localStorage.removeItem('cf_tok'); localStorage.removeItem('cf_tok_ts'); }
+
+function startGoogle(){
+  document.getElementById('auth-err').textContent='';
+  if(typeof google==='undefined'||!google.accounts){
+    document.getElementById('auth-err').textContent='Cargando Google... intentá de nuevo.';
+    setTimeout(()=>startGoogle(),2000); return;
+  }
+  doSignIn(false);
+}
+
+function reconectGoogle(){
+  const btn=document.getElementById('reconect-btn');
+  btn.textContent='Conectando...'; btn.disabled=true;
+  document.getElementById('reconect-err').textContent='';
+  doSignIn(false, 'reconect');
+}
+
+function doSignIn(silent=false, errTarget='auth'){
+  const client=google.accounts.oauth2.initTokenClient({
+    client_id:CLIENT_ID, scope:DRIVE_SCOPE,
+    prompt: silent ? '' : 'select_account',
+    callback: async resp=>{
+      if(resp.error||!resp.access_token){
+        if(errTarget==='reconect'){
+          const btn=document.getElementById('reconect-btn');
+          btn.textContent='Reconectar Google Drive'; btn.disabled=false;
+          document.getElementById('reconect-err').textContent='Error: '+resp.error;
+        } else {
+          document.getElementById('auth-err').textContent='Error: '+resp.error;
+        }
+        return;
+      }
+      gToken=resp.access_token; useGoogle=true;
+      saveToken(gToken);
+      localStorage.setItem('cf_ug','1');
+      hideAll();
+      showLoading();
+      await bootDrive();
+    }
+  });
+  client.requestAccessToken(silent?{prompt:''}:{});
+}
+
+async function refreshToken(){
+  return new Promise((resolve,reject)=>{
+    if(typeof google==='undefined'||!google.accounts){reject('no google');return;}
+    const client=google.accounts.oauth2.initTokenClient({
+      client_id:CLIENT_ID, scope:DRIVE_SCOPE, prompt:'',
+      callback:resp=>{
+        if(resp.error||!resp.access_token){reject(resp.error);return;}
+        gToken=resp.access_token; saveToken(gToken); resolve();
+      }
+    });
+    client.requestAccessToken({prompt:''});
+  });
+}
+
+function skipAuth(){
+  useGoogle=false; clearToken(); localStorage.removeItem('cf_ug');
+  document.getElementById('auth').style.display='none';
+  document.getElementById('reconect').style.display='none';
+  bootLocal();
+}
+
+async function driveReq(url,opts={},retry=true){
+  const res=await fetch(url,{...opts,headers:{'Authorization':'Bearer '+gToken,...(opts.headers||{})}});
+  if(res.status===401&&retry){
+    try{ await refreshToken(); }
+    catch(e){ clearToken(); useGoogle=false; localStorage.removeItem('cf_ug'); setEl('sync-st','⚠ sesión'); throw new Error('Token expirado'); }
+    return driveReq(url,opts,false);
+  }
+  if(!res.ok)throw new Error('Drive '+res.status); return res;
+}
+
+async function findFile(){
+  const r=await driveReq(`https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name='${DRIVE_FILE}'&fields=files(id)`);
+  const d=await r.json(); return d.files?.[0]?.id||null;
+}
+async function readFile(id){
+  const r=await driveReq(`https://www.googleapis.com/drive/v3/files/${id}?alt=media`); return await r.json();
+}
+async function createFile(cv){
+  const meta={name:DRIVE_FILE,parents:['appDataFolder']};
+  const form=new FormData();
+  form.append('metadata',new Blob([JSON.stringify(meta)],{type:'application/json'}));
+  form.append('file',new Blob([JSON.stringify(cv)],{type:'application/json'}));
+  const r=await driveReq('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',{method:'POST',body:form});
+  return(await r.json()).id;
+}
+async function updateFile(id,cv){
+  await driveReq(`https://www.googleapis.com/upload/drive/v3/files/${id}?uploadType=media`,
+    {method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(cv)});
+}
+async function saveDrive(){
+  try{
+    setEl('sync-st','↑...');
+    if(!driveFileId)driveFileId=await findFile();
+    if(driveFileId)await updateFile(driveFileId,ST);
+    else driveFileId=await createFile(ST);
+    const t=new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+    setEl('sync-st','✓ '+t); lsave();
+  }catch(e){setEl('sync-st','⚠ local');lsave();}
+}
+async function syncNow(){
+  if(useGoogle){toast('Guardando...',900);await saveDrive();toast('Sincronizado ✓');}
+  else{lsave();toast('Guardado ✓');}
+}
+
+/* ── BOOT ─────────────────────────────────────────────────────────────── */
+let _modalResolve=null;
+function showModal(title,msg,confirmLabel='Confirmar',danger=true){
+  return new Promise(resolve=>{
+    _modalResolve=resolve;
+    setEl('modal-title',title);
+    setEl('modal-msg',msg);
+    const btn=document.getElementById('modal-confirm-btn');
+    btn.textContent=confirmLabel;
+    btn.className='btn'+(danger?' r':'');
+    const overlay=document.getElementById('modal-overlay');
+    overlay.style.display='flex';
+    // slide up animation
+    const box=document.getElementById('modal-box');
+    box.style.transform='translateY(100%)';
+    box.style.transition='transform .25s ease';
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{box.style.transform='translateY(0)'}));
+  });
+}
+function modalResolve(val){
+  const overlay=document.getElementById('modal-overlay');
+  const box=document.getElementById('modal-box');
+  box.style.transform='translateY(100%)';
+  setTimeout(()=>{overlay.style.display='none';},250);
+  if(_modalResolve){_modalResolve(val);_modalResolve=null;}
+  if(val&&navigator.vibrate)navigator.vibrate(10);
+}
+// Close on overlay tap
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('modal-overlay').addEventListener('click',e=>{
+    if(e.target.id==='modal-overlay')modalResolve(false);
+  });
+});
+function setLoadingProgress(pct,msg){
+  const bar=document.getElementById('loading-bar');
+  const lbl=document.getElementById('loading-msg');
+  if(bar)bar.style.width=pct+'%';
+  if(lbl&&msg)lbl.textContent=msg;
+}
+async function bootDrive(){
+  setLoadingProgress(20,'Conectando a Drive...');
+  try{
+    setLoadingProgress(50,'Buscando datos...');
+    driveFileId=await findFile();
+    if(driveFileId){
+      setLoadingProgress(75,'Cargando...');
+      ST=ensureState(await readFile(driveFileId));
+      setEl('sync-st','✓ Drive'); toast('Cargado desde Drive ✓',2000);
+    }else{ ST=ensureState(lload()||initST()); setEl('sync-st','nuevo'); }
+  }catch(e){ ST=ensureState(lload()||initST()); setEl('sync-st','⚠ local'); }
+  setLoadingProgress(100,'Listo');
+  setTimeout(finishBoot, 300);
+}
+function bootLocal(){
+  setLoadingProgress(60,'Cargando datos locales...');
+  ST=ensureState(lload()||initST()); setEl('sync-st','local');
+  setLoadingProgress(100,'Listo');
+  setTimeout(finishBoot,200);
+}
+function finishBoot(){
+  document.getElementById('loading').classList.add('hide');
+  document.getElementById('pago-f').value=new Date().toISOString().slice(0,10);
+  renderTC(); updateAll(); updateTC();
+  setInterval(updateTC,30*60*1000);
+  if(useGoogle){
+    // Renovar token cada 50 minutos para mantener sesión viva
+    setInterval(async()=>{
+      try{ await refreshToken(); }catch(e){}
+    }, 50*60*1000);
+    setInterval(saveDrive,3*60*1000);
+  }
+}
+
+/* ── INIT ─────────────────────────────────────────────────────────────── */
+window.addEventListener('DOMContentLoaded',()=>{
+  const wasGoogle = localStorage.getItem('cf_ug')==='1';
+  if(!wasGoogle){ showAuth(); return; }
+
+  // ── Caso 1: token cacheado y vivo → entrar directo sin tocar Google
+  const cachedToken = loadToken();
+  if(cachedToken){
+    gToken=cachedToken; useGoogle=true;
+    showLoading();
+    bootDrive();
+    return;
+  }
+
+  // ── Caso 2: token expirado → intentar silent login
+  showLoading();
+  let resolved=false;
+  const hardTimeout=setTimeout(()=>{
+    if(!resolved){ resolved=true; showReconect(); }
+  },7000);
+
+  const trySilent=n=>{
+    if(resolved)return;
+    if(typeof google!=='undefined'&&google.accounts){
+      const client=google.accounts.oauth2.initTokenClient({
+        client_id:CLIENT_ID, scope:DRIVE_SCOPE, prompt:'',
+        callback:async resp=>{
+          if(resolved)return;
+          resolved=true; clearTimeout(hardTimeout);
+          if(resp.error||!resp.access_token){ showReconect(); return; }
+          gToken=resp.access_token; useGoogle=true; saveToken(gToken);
+          await bootDrive();
+        }
+      });
+      try{
+        client.requestAccessToken({prompt:''});
+        // Si Google no responde en 5s, mostrar reconectar
+        setTimeout(()=>{
+          if(!resolved&&n>0) trySilent(n-1);
+          else if(!resolved){ resolved=true; clearTimeout(hardTimeout); showReconect(); }
+        },5000);
+      }catch(e){
+        if(!resolved){ resolved=true; clearTimeout(hardTimeout); showReconect(); }
+      }
+    }else if(n>0){
+      setTimeout(()=>trySilent(n-1),600);
+    }else{
+      if(!resolved){ resolved=true; clearTimeout(hardTimeout); showReconect(); }
+    }
+  };
+  trySilent(8);
+});
+</script>
+</body>
+</html>
