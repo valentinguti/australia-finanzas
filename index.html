@@ -1343,3 +1343,20 @@ window.addEventListener('DOMContentLoaded', () => {
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 </body>
 </html>
+/**
+ * Alterna la visibilidad de la fila para agregar gastos.
+ * @param {string} catId - El ID de la categoría (ej: 'comida', 'transporte').
+ */
+function toggleAddRow(catId) {
+  const row = document.getElementById('add-row-' + catId);
+  if (row) {
+    // La clase 'open' ya está definida en tu CSS con 'display: flex'
+    row.classList.toggle('open');
+    
+    // Si se abre, pone el foco en el campo del monto automáticamente
+    if (row.classList.contains('open')) {
+      const input = row.querySelector('.add-amt');
+      if (input) input.focus();
+    }
+  }
+}
