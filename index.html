@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+            background: #f8f8f8;
+            padding: 40px 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            padding: 40px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .header {
+            margin-bottom: 40px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #888;
+            font-size: 14px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 20px;
+            padding: 14px 0;
+            border-bottom: 1px solid #e8e8e8;
+            align-items: center;
+        }
+
+        .row:last-child {
+            border-bottom: none;
+        }
+
+        .row.header-row {
+            padding: 12px 0 14px 0;
+            border-bottom: 1px solid #d0d0d0;
+            font-weight: 600;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .row.total-row {
+            padding: 16px 0;
+            border-top: 1px solid #d0d0d0;
+            border-bottom: 1px solid #d0d0d0;
+            font-weight: 700;
+            background: #fafafa;
+        }
+
+        .row.highlight-row {
+            background: #fff9e6;
+            padding: 16px 14px;
+            border-radius: 4px;
+            border-bottom: none;
+            margin-bottom: 8px;
+        }
+
+        .label {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .label.secondary {
+            color: #999;
+            font-weight: 400;
+        }
+
+        .amount {
+            text-align: right;
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .currency {
+            font-size: 12px;
+            color: #888;
+            margin-right: 4px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .status-pending {
+            background: #ffe0e0;
+            color: #d32f2f;
+        }
+
+        .status-paid {
+            background: #e0f2e0;
+            color: #2e7d32;
+        }
+
+        .currency-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 12px;
+        }
+
+        .currency-tab {
+            padding: 8px 12px;
+            border: none;
+            background: none;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #888;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .currency-tab.active {
+            color: #333;
+            border-bottom-color: #333;
+        }
+
+        .amount-box {
+            background: #fafafa;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .amount-box-label {
+            font-size: 12px;
+            color: #888;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            letter-spacing: 0.3px;
+        }
+
+        .amount-box-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .action-button {
+            display: inline-block;
+            padding: 10px 16px;
+            border: 1px solid #d0d0d0;
+            background: white;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #333;
+        }
+
+        .action-button:hover {
+            background: #f5f5f5;
+            border-color: #999;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .row {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .row.header-row {
+                display: none;
+            }
+
+            .row:not(.header-row) {
+                grid-template-columns: 1fr;
+                padding: 12px 0;
+            }
+
+            .amount {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Finanzas Personales</h1>
+            <p>Tracking de deudas e inversión inicial</p>
+        </div>
+
+        <!-- Deuda con Padres -->
+        <div class="section">
+            <div class="section-title">Deuda con Padres</div>
+
+            <div class="grid-2">
+                <div class="amount-box">
+                    <div class="amount-box-label">Deuda Bruta</div>
+                    <div class="amount-box-value">AUD 6445.67</div>
+                    <div style="font-size: 12px; color: #888; margin-top: 4px;">USD 4926.05</div>
+                </div>
+                <div class="amount-box">
+                    <div class="amount-box-label">Deuda Pendiente</div>
+                    <div class="amount-box-value">AUD 6445.67</div>
+                    <div style="font-size: 12px; color: #888; margin-top: 4px;">USD 4926.05</div>
+                </div>
+            </div>
+
+            <div class="row header-row">
+                <div class="label">Concepto</div>
+                <div class="label">AUD</div>
+                <div class="label">USD</div>
+            </div>
+
+            <div class="row">
+                <div class="label">Inversión inicial</div>
+                <div class="amount"><span class="currency">AUD</span>5551.67</div>
+                <div class="amount"><span class="currency">USD</span>3665.51</div>
+            </div>
+
+            <div class="row">
+                <div class="label">Apoyo de padres</div>
+                <div class="amount"><span class="currency">AUD</span>894.00</div>
+                <div class="amount"><span class="currency">USD</span>1260.54</div>
+            </div>
+
+            <div class="row total-row">
+                <div class="label">Deuda Bruta</div>
+                <div class="amount"><span class="currency">AUD</span>6445.67</div>
+                <div class="amount"><span class="currency">USD</span>4926.05</div>
+            </div>
+
+            <div class="row">
+                <div class="label secondary">Pagos realizados</div>
+                <div class="amount"><span class="currency">AUD</span>0.00</div>
+                <div class="amount"><span class="currency">USD</span>0.00</div>
+            </div>
+
+            <div class="row highlight-row">
+                <div class="label">Deuda pendiente</div>
+                <div class="amount"><span class="currency">AUD</span>6445.67</div>
+                <div class="amount"><span class="currency">USD</span>4926.05</div>
+            </div>
+        </div>
+
+        <!-- Gastos Iniciales -->
+        <div class="section">
+            <div class="section-title">Gastos de Instalación</div>
+
+            <div class="row header-row">
+                <div class="label">Concepto</div>
+                <div class="label">AUD</div>
+                <div class="label">USD</div>
+            </div>
+
+            <div class="row">
+                <div class="label">Alojamiento inicial</div>
+                <div class="amount"><span class="currency">AUD</span>1200.00</div>
+                <div class="amount"><span class="currency">USD</span>834.58</div>
+            </div>
+
+            <div class="row">
+                <div class="label">Teléfono / SIM</div>
+                <div class="amount"><span class="currency">AUD</span>268.00</div>
+                <div class="amount"><span class="currency">USD</span>185.88</div>
+            </div>
+
+            <div class="row">
+                <div class="label">Transporte setup</div>
+                <div class="amount"><span class="currency">AUD</span>1162.51</div>
+                <div class="amount"><span class="currency">USD</span>807.72</div>
+            </div>
+
+            <div class="row">
+                <div class="label">White Card / Forklift</div>
+                <div class="amount"><span class="currency">AUD</span>120.00</div>
+                <div class="amount"><span class="currency">USD</span>83.46</div>
+            </div>
+
+            <div class="row">
+                <div class="label">Fondo emergencia</div>
+                <div class="amount"><span class="currency">AUD</span>1800.00</div>
+                <div class="amount"><span class="currency">USD</span>1250.71</div>
+            </div>
+
+            <div class="row total-row">
+                <div class="label">Total Gastos</div>
+                <div class="amount"><span class="currency">AUD</span>5551.67</div>
+                <div class="amount"><span class="currency">USD</span>3665.51</div>
+            </div>
+        </div>
+
+        <!-- Resumen Estado Actual -->
+        <div class="section">
+            <div class="section-title">Estado Actual</div>
+
+            <div class="grid-2">
+                <div class="amount-box">
+                    <div class="amount-box-label">Deuda Total</div>
+                    <div class="amount-box-value">AUD 6445.67</div>
+                </div>
+                <div class="amount-box">
+                    <div class="amount-box-label">Pagado hasta ahora</div>
+                    <div class="amount-box-value">AUD 0.00</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="label">Estado</div>
+                <div style="text-align: right;">
+                    <span class="status-badge status-pending">PENDIENTE DE PAGO</span>
+                </div>
+                <div></div>
+            </div>
+        </div>
+
+        <button class="action-button" onclick="window.print()">+ Agregar transacción</button>
+    </div>
+</body>
+</html>
